@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="data.json"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Employee DataBase</a>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="employeeTable"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+
+    <script type="text/template" class="employeeDetails">
+        <h2>Employee Information</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID <span class="pull-right glyphicon <%- sortDirectionIcon['index'] %>" onclick="sort('index')"></span></th>
+                    <th>Name <span class="pull-right glyphicon <%- sortDirectionIcon['name'] %>" onclick="sort('name')"></span></th>
+                    <th>Company <span class="pull-right glyphicon <%- sortDirectionIcon['company'] %>" onclick="sort('company')"></span></th>
+                    <th>Email <span class="pull-right glyphicon <%- sortDirectionIcon['email'] %>" onclick="sort('email')"></span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input class="form-control input-sm" id="index" type="text" placeHolder="Full Search and Enter" onchange="onFilter('index')"></td>
+                    <td><input class="form-control input-sm" id="name" type="text" placeHolder="Full Search and Enter" onchange="onFilter('name')"></td>
+                    <td><input class="form-control input-sm" id="company" type="text" placeHolder="Full Search and Enter" onchange="onFilter('company')"></td>
+                    <td><input class="form-control input-sm" id="email" type="text" placeHolder="Full Search and Enter" onchange="onFilter('email')"></td>
+                    <td><button type="button" class="btn btn-default" onclick="clearFilters()">Clear Filters</button></td>
+
+                    <td></td>
+                </tr>
+                <% _.each(employees, function(employee){ %>
+
+                    </tr>
+                    <td class="<%- sortColumnColor['index'] %>">
+                        <%- employee.index %>
+                    </td>
+                    <td class="<%- sortColumnColor['name'] %>">
+                        <%- employee.name %>
+                    </td>
+                    <td class="<%- sortColumnColor['company'] %>">
+                        <%- employee.company %>
+                    </td>
+                    <td class="<%- sortColumnColor['email'] %>">
+                        <%- employee.email %>
+                    </td>
+                    <td><a class="btn btn-default" href="details.html?employee=<%- employee._id %>">Details</a></td>
+                    </tr>
+                    <% }); %>
+                        <tr>
+
+                        </tr>
+            </tbody>
+        </table>
+    </script>
+
+    <script>
+        // Creating Table Information
+        var employeeDetailsTemplate = _.template($("script.employeeDetails").html());
+        var employeeJson = {
+            employees: empInfo
+        }
+        var sortDirectionIcon = {
+            index: 'glyphicon glyphicon-sort-by-alphabet',
+            name: 'glyphicon glyphicon-sort-by-alphabet',
+            company: 'glyphicon glyphicon-sort-by-alphabet',
+            email: 'glyphicon glyphicon-sort-by-alphabet'
+        };
+        var sortColumnColor = {
+            index: '',
+            name: '',
+            company: '',
+            email: ''
+        };
+        var sortDirection = {
+            index: 'desc',
+            name: 'desc',
+            company: 'desc',
+            email: 'desc'
+        };
+        employeeJson.employees = _.sortBy(employeeJson.employees, 'index');
+
+        function sort(value) {
+            if (sortDirection[value] == 'asc') {
+                employeeJson.employees = _.sortBy(employeeJson.employees, value);
+                sortDirection[value] = 'desc';
+                sortDirectionIcon[value] = 'glyphicon glyphicon-sort-by-alphabet';
+                sortColumnColor = {
+                    index: '',
+                    name: '',
+                    company: '',
+                    email: ''
+                };
+                sortColumnColor[value] = 'backgroundColumn';
+
+            } else if (sortDirection[value] == 'desc') {
+                employeeJson.employees = _.sortBy(employeeJson.employees, value).reverse();
+                sortDirection[value] = 'asc';
+                sortDirectionIcon[value] = 'glyphicon glyphicon-sort-by-alphabet-alt';
+                sortColumnColor = {
+                    index: '',
+                    name: '',
+                    company: '',
+                    email: ''
+                };
+                sortColumnColor[value] = 'backgroundColumn';
+            }
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+
+        }
+
+        function onFilter(columnName) {
+            var columnValue = document.getElementById(columnName).value;
+            if (columnName == 'index') {
+                columnValue = +columnValue;
+            }
+            employeeJson.employees = employeeJson.employees.filter(function(el) {
+                return el[columnName] === columnValue;
+            });
+            console.log(employeeJson.employees);
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+        }
+
+        function clearFilters() {
+            employeeJson.employees = empInfo;
+            sortDirectionIcon = {
+                index: 'glyphicon glyphicon-sort-by-alphabet',
+                name: 'glyphicon glyphicon-sort-by-alphabet',
+                company: 'glyphicon glyphicon-sort-by-alphabet',
+                email: 'glyphicon glyphicon-sort-by-alphabet'
+            };
+            sortDirection = {
+                index: 'desc',
+                name: 'desc',
+                company: 'desc',
+                email: 'desc'
+            };
+            sortColumnColor = {
+                index: '',
+                name: '',
+                company: '',
+                email: ''
+            };
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+        }
+        // Get Customer Data
+
+        // Display Template
+        $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+        console.log(employeeJson.employees);
+    </script>
+
+</body>
+
+</html>

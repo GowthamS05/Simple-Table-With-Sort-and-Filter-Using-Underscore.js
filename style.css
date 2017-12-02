@@ -1,0 +1,12 @@
+body {
+    font-family: Palatino Linotype;
+    font-weight: bold;
+}
+
+.backgroundColumn {
+    background-color: #faf2cc;
+}
+
+.navbar {
+    margin-bottom: 0px!important;
+}
