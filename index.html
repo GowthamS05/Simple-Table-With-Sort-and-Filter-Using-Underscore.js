@@ -44,10 +44,10 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><input class="form-control input-sm" id="index" type="text" placeHolder="Full Search and Enter" onchange="onFilter('index')"></td>
-                    <td><input class="form-control input-sm" id="name" type="text" placeHolder="Full Search and Enter" onchange="onFilter('name')"></td>
-                    <td><input class="form-control input-sm" id="company" type="text" placeHolder="Full Search and Enter" onchange="onFilter('company')"></td>
-                    <td><input class="form-control input-sm" id="email" type="text" placeHolder="Full Search and Enter" onchange="onFilter('email')"></td>
+                    <td><input class="form-control input-sm" id="index" type="text" placeHolder="Full Search and Enter" onkeyup="onFilter('index')"></td>
+                    <td><input class="form-control input-sm" id="name" type="text" placeHolder="Full Search and Enter" onkeyup="onFilter('name')"></td>
+                    <td><input class="form-control input-sm" id="company" type="text" placeHolder="Full Search and Enter" onkeyup="onFilter('company')"></td>
+                    <td><input class="form-control input-sm" id="email" type="text" placeHolder="Full Search and Enter" onkeyup="onFilter('email')"></td>
                     <td><button type="button" class="btn btn-default" onclick="clearFilters()">Clear Filters</button></td>
 
                     <td></td>
@@ -133,15 +133,30 @@
         }
 
         function onFilter(columnName) {
+
             var columnValue = document.getElementById(columnName).value;
-            if (columnName == 'index') {
-                columnValue = +columnValue;
+            if (columnValue) {
+                if (columnName == 'index') {
+                    columnValue = +columnValue;
+                }
+                // employeeJson.employees = employeeJson.employees.filter(function(el) {
+                //     return el[columnName] === columnValue;
+                // });
+                employeeJson.employees = _.filter(employeeJson.employees, function(item) {
+                    if (columnName == 'index') {
+                        return item[columnName] === columnValue;
+                    } else {
+                        return item[columnName].toLowerCase().indexOf(columnValue.toLowerCase()) >= 0;
+                    }
+                });
+                console.log(employeeJson.employees);
+                $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+                document.getElementById(columnName).value = columnValue;
+                document.getElementById(columnName).focus();
+            } else {
+                clearFilters();
             }
-            employeeJson.employees = employeeJson.employees.filter(function(el) {
-                return el[columnName] === columnValue;
-            });
-            console.log(employeeJson.employees);
-            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+
         }
 
         function clearFilters() {
