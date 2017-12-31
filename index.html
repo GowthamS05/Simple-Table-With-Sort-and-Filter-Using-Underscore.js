@@ -139,7 +139,8 @@
 
         function sort(value) {
             if (sortDirection[value] == 'asc') {
-                employeeJson.employees = _.sortBy(employeeJson.employees, value);
+                empInfo = _.sortBy(empInfo, value);
+                employeeJson.employees = _.sortBy(empInfo, value).slice(0, 5);
                 sortDirection[value] = 'desc';
                 sortDirectionIcon[value] = 'glyphicon glyphicon-sort-by-alphabet';
                 sortColumnColor = {
@@ -151,7 +152,8 @@
                 sortColumnColor[value] = 'backgroundColumn';
 
             } else if (sortDirection[value] == 'desc') {
-                employeeJson.employees = _.sortBy(employeeJson.employees, value).reverse();
+                empInfo = _.sortBy(empInfo, value).reverse();
+                employeeJson.employees = _.sortBy(empInfo, value).reverse().slice(0, 5);
                 sortDirection[value] = 'asc';
                 sortDirectionIcon[value] = 'glyphicon glyphicon-sort-by-alphabet-alt';
                 sortColumnColor = {
@@ -191,7 +193,8 @@
         }
         //clear filters
         function clearFilters() {
-            employeeJson.employees = empInfo;
+            empInfo = _.sortBy(empInfo, 'index');
+            employeeJson.employees = empInfo.slice(0, 5);
             sortDirectionIcon = {
                 index: 'glyphicon glyphicon-sort-by-alphabet',
                 name: 'glyphicon glyphicon-sort-by-alphabet',
