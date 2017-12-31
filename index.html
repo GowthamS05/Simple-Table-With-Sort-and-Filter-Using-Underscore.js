@@ -25,6 +25,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div id="employeeTable"></div>
+
             </div>
         </div>
     </div>
@@ -74,14 +75,46 @@
 
                         </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan=5>
+                        <div class="pull-right">
+                            <table>
+                                <td width=30px onclick="previousPage(employeeJson.pagingStart)">
+                                    <span class="glyphicon glyphicon-chevron-left"></span>
+                                </td>
+                                <td width=100px>
+                                    Page
+                                    <%-employeeJson.pagingStart%> of
+                                        <%-pagingEnd%>
+                                </td>
+                                <td width=30px onclick="nextPage(employeeJson.pagingStart)">
+                                    <span class="glyphicon glyphicon-chevron-right"></span>
+                                </td>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
+        <div class="notificationBarAlert animateOpen <%- showHideNotification %>">
+            <span class="glyphicon glyphicon-info-sign"></span>
+            <span> <%- employeeJson.notificationMessage%> </span>
+            <span class="glyphicon glyphicon-remove-sign" id='close' onclick='closeNotification()'></span>
+        </div>
+
     </script>
 
     <script>
         // Creating Table Information
         var employeeDetailsTemplate = _.template($("script.employeeDetails").html());
+        var pagingEnd = Math.ceil(empInfo.length / 5);
+        var startValue = 1;
         var employeeJson = {
-            employees: empInfo
+            employees: empInfo.slice(0, 5),
+            pagingStart: startValue,
+            notificationMessage: '',
+            showHideNotification: "hideNotification"
         }
         var sortDirectionIcon = {
             index: 'glyphicon glyphicon-sort-by-alphabet',
@@ -101,6 +134,7 @@
             company: 'desc',
             email: 'desc'
         };
+        /* Default Sorting*/
         employeeJson.employees = _.sortBy(employeeJson.employees, 'index');
 
         function sort(value) {
@@ -131,7 +165,7 @@
             $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
 
         }
-
+        /* Filtering*/
         function onFilter(columnName) {
 
             var columnValue = document.getElementById(columnName).value;
@@ -139,9 +173,6 @@
                 if (columnName == 'index') {
                     columnValue = +columnValue;
                 }
-                // employeeJson.employees = employeeJson.employees.filter(function(el) {
-                //     return el[columnName] === columnValue;
-                // });
                 employeeJson.employees = _.filter(employeeJson.employees, function(item) {
                     if (columnName == 'index') {
                         return item[columnName] === columnValue;
@@ -158,7 +189,7 @@
             }
 
         }
-
+        //clear filters
         function clearFilters() {
             employeeJson.employees = empInfo;
             sortDirectionIcon = {
@@ -181,11 +212,51 @@
             };
             $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
         }
-        // Get Customer Data
+        //* Pagination 
+        function nextPage(value) {
+            if (value == 1 || value < pagingEnd) {
+                employeeJson.pagingStart = employeeJson.pagingStart + 1;
+                employeeJson.employees = empInfo.slice(value * 5, employeeJson.pagingStart * 5);
+            } else {
+                employeeJson.notificationMessage = 'Click on Previous button';
+                employeeJson.showHideNotification = 'showNotification'
+                setTimeout(function() {
+                    employeeJson.notificationMessage = '';
+                    employeeJson.showHideNotification = 'hideNotification';
+                    $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+                }, 3000);
+            }
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+
+        }
+
+        function previousPage(value) {
+            if (value > 1) {
+                employeeJson.pagingStart = employeeJson.pagingStart - 1;
+                employeeJson.employees = empInfo.slice((employeeJson.pagingStart - 1) * 5, employeeJson.pagingStart * 5);
+
+            } else {
+                employeeJson.notificationMessage = 'Click on Next button';
+                employeeJson.showHideNotification = 'showNotification'
+                setTimeout(function() {
+                    employeeJson.notificationMessage = '';
+                    employeeJson.showHideNotification = 'hideNotification';
+                    $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+                }, 3000);
+
+            }
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+        }
+
+        // Close Notification
+        function closeNotification() {
+            employeeJson.notificationMessage = '';
+            employeeJson.showHideNotification = 'hideNotification';
+            $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
+        }
 
         // Display Template
         $("#employeeTable").html(employeeDetailsTemplate(employeeJson));
-        console.log(employeeJson.employees);
     </script>
 
 </body>

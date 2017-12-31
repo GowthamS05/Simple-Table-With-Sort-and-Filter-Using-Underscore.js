@@ -10,3 +10,61 @@ body {
 .navbar {
     margin-bottom: 0px!important;
 }
+
+.notificationBarAlert {
+    position: absolute;
+    width: auto;
+    right: 2%;
+    height: auto;
+    border-radius: 10px;
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 15px;
+}
+
+.glyphicon-remove-sign {
+    top: -20px;
+    right: -17px;
+}
+
+.hideNotification {
+    display: none;
+}
+
+.showNotification {
+    display: block;
+}
+
+.animateOpen {
+    -webkit-animation: moveOpen 3s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-fill-mode: forwards;
+}
+
+
+/* Safari and Chrome */
+
+@-webkit-keyframes moveOpen {
+    from {
+        -webkit-transform: translate(0, -100px);
+    }
+    10% {
+        -webkit-transform: translate(0, 20px);
+    }
+    12% {
+        -webkit-transform: translate(0, 22px);
+    }
+    16% {
+        -webkit-transform: translate(0, 20px);
+    }
+    80% {
+        -webkit-transform: translate(0, 20px);
+    }
+    85% {
+        -webkit-transform: translate(0, 25px);
+    }
+    to {
+        -webkit-transform: translate(0, -100px);
+    }
+}
